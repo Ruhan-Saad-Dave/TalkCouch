@@ -3,15 +3,12 @@ from dotenv import load_dotenv
 import speech_recognition as sr
 from gtts import gTTS
 import os
+from src.llm import get_model
 
-load_dotenv()
-
-model = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash"
-)
 message = "Generate a paragraph of text where the sentences are related, note that it will be used by the user to practice their explaination ability. Make sure to only provide sentences without any additional text or explaination."
 
 def generate_text():
+    model = get_model()
     result = model.invoke(message)
     return result.content
 
@@ -54,6 +51,7 @@ def check_correctness(recorded_audio, generated_text):
     Please evaluate how well the user explained or summarized the original text. Provide concise feedback.
     """
 
+    model = get_model()
     feedback_result = model.invoke(feedback_prompt)
     feedback = feedback_result.content
 

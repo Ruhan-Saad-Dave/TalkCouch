@@ -5,15 +5,12 @@ from gtts import gTTS
 import difflib
 import os
 import string
+from src.llm import get_model
 
-load_dotenv()
-
-model = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash"
-)
 message = "Generate a sentence suitable for speech practice. Make sure to only provide the sentence without any additional text or explaination."
 
 def generate_text():
+    model = get_model()
     result = model.invoke(message)
     return result.content
 
