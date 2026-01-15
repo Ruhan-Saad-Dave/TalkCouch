@@ -7,6 +7,7 @@ git clone https://github.com/Ruhan-Saad-Dave/TalkCouch.git
 
 ```bash
 pip install uv
+uv sync
 uv run main.py
 ```
 
