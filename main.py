@@ -1,9 +1,11 @@
 import gradio as gr 
 
 from ui.jumble import JumbleSentences
+from ui.speech import SpeechPractice
 
-with gr.Blocks() as demo:
-    gr.Markdown("# Jumble Sentences Exercise")
-    JumbleSentences.render()
+demo = gr.TabbedInterface(
+    [JumbleSentences, SpeechPractice],
+    tab_names=["Jumble Sentences", "Speech Practice"]
+)
 
 demo.launch()

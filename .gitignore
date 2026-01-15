@@ -9,3 +9,7 @@ wheels/
 # Virtual environments
 .venv
 .env
+
+# other files
+generated_speech.mp3
+output.txt
