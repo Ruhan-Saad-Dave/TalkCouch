@@ -11,8 +11,10 @@ uv sync
 uv run main.py
 ```
 
-go to http://127.0.0.1:7860/ on a browser (preferably chrome) to see it.
+go to http://localhost:7860/ on a browser (preferably chrome) to see it.
 
 
 add a .env file with content:
+```bash
 GOOGLE_API_KEY = "apikey here"
+```
