@@ -7,7 +7,8 @@ from ui.summary import SummarizationPractice
 
 demo = gr.TabbedInterface(
     [JumbleSentences, SpeechPractice, SummarizationPractice],
-    tab_names=["Jumble Sentences", "Speech Practice", "Summarization Practice"]
+    tab_names=["Jumble Sentences", "Speech Practice", "Summarization Practice"],
+    title="TalkCouch"
 )
 
 demo.launch(server_name="0.0.0.0", server_port=int(os.getenv("PORT", 7860)))

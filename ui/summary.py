@@ -3,6 +3,7 @@ import gradio as gr
 from src.summary import generate_speech, check_correctness
 
 with gr.Blocks() as SummarizationPractice:
+    gr.Markdown("Listen to the generated paragraph and explain it in your own words.")
     generated_text_state = gr.State("")
 
     with gr.Row():

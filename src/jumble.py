@@ -47,6 +47,7 @@ def generate_sentences():
             answers, 
             question_label, 
             gr.Button(value="Submit", interactive=True),
+            "",
             score_label_reset,
             accuracy_label_reset,
             index_reset,
@@ -57,7 +58,7 @@ def generate_sentences():
     except Exception as e:
         print(f"Error generating sentences: {e}")
         # Return dummy values for all outputs
-        return [], [], gr.Label(value=f"Error: {e}", label="Error"), gr.Button(value="Submit", interactive=False), "Error", "Error", 1, 0, 0, ""
+        return [], [], gr.Label(value=f"Error: {e}", label="Error"), gr.Button(value="Submit", interactive=False), "", "Error", "Error", 1, 0, 0, ""
 
 def submit_answer(user_answer, question_state, answer_state, index_state, score_state, total_score_state):
     # Normalize by making lowercase and removing punctuation
@@ -83,7 +84,7 @@ def submit_answer(user_answer, question_state, answer_state, index_state, score_
         score_text = f"Final Score: {score_state} / {total_score_state}"
         accuracy_text = f"Final Accuracy: {final_accuracy:.2f}%"
 
-    return "next", gr.Button(value="Next", interactive=True), question_label, answer_state[index_state - 1], index_state , score_state, score_text, accuracy_text, total_score_state
+    return "next", gr.Button(value="Next", interactive=True), user_answer, question_label, answer_state[index_state - 1], index_state , score_state, score_text, accuracy_text, total_score_state
 
 def next_question(user_answer, question_state, answer_state, index_state, score_state, total_score_state):
     if index_state < len(question_state):
@@ -95,7 +96,7 @@ def next_question(user_answer, question_state, answer_state, index_state, score_
         score_text = "Complete all the sentences to see your score."
         accuracy_text = "Complete all the sentences to see your accuracy."
 
-        return "submit", gr.Button(value="Submit", interactive=True), question_label, "", index_state, score_state, score_text, accuracy_text, total_score_state
+        return "submit", gr.Button(value="Submit", interactive=True), "", question_label, "", index_state, score_state, score_text, accuracy_text, total_score_state
     else:
         # End of quiz
         question_label = gr.Label(value="You have completed all questions. Please generate new sentences.", label="Finished")
@@ -104,7 +105,7 @@ def next_question(user_answer, question_state, answer_state, index_state, score_
         score_text = f"Final Score: {score_state} / {total_score_state}"
         accuracy_text = f"Final Accuracy: {final_accuracy:.2f}%"
 
-        return "submit", gr.Button(value="Submit", interactive=False), question_label, "", index_state, score_state, score_text, accuracy_text, total_score_state
+        return "submit", gr.Button(value="Submit", interactive=False), "", question_label, "", index_state, score_state, score_text, accuracy_text, total_score_state
 
 def submit_next(submit_next_state, user_answer, question_state, answer_state, index_state, score_state, total_score_state):
     if submit_next_state == "submit":
