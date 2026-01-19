@@ -1,27 +1,14 @@
-from langchain_google_genai import ChatGoogleGenerativeAI 
-from dotenv import load_dotenv
 import speech_recognition as sr
-from gtts import gTTS
-import os
+
 from src.llm import get_model
 
-message = "Generate a paragraph of text where the sentences are related, note that it will be used by the user to practice their explaination ability. Make sure to only provide sentences without any additional text or explaination."
 model = get_model()
+message = "Generate a scenario based question to test what the user will do at that situation. Only give the question and do not give any explaination."
 
-def generate_text():
-    try:
-        result = model.invoke(message)
-        return result.content
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return "The resources are exhausted"
-
-def generate_speech():
-    content = generate_text()
-    tts = gTTS(text=content, lang='en')
-    speech_file = "generated_speech.mp3"
-    tts.save(speech_file)
-    return speech_file, content
+def generate_scenario():
+    result = model.invoke(message)
+    topic = result.content
+    return topic, topic, None, "", ""
 
 def record_speech(recorded_audio):
     if recorded_audio is None:
@@ -38,21 +25,21 @@ def record_speech(recorded_audio):
         except sr.RequestError as e:
             return f"Could not request results; {e}"
 
-def check_correctness(recorded_audio, generated_text):
-    user_answer = record_speech(recorded_audio)
+def check_answer(topic, audio_filepath):
+    if audio_filepath is None:
+        return "No audio recorded. Please record your audio first."
+    user_answer = record_speech(audio_filepath)
     
     feedback_prompt = f"""
-    The original text is:
+    The user is asked to say what they would do in the following scenario:
     ---
-    {generated_text}
+    {topic}
     ---
-
-    The user's explanation is:
+    The user's answer is:
     ---
     {user_answer}
     ---
-
-    Please evaluate how well the user explained or summarized the original text. Provide concise feedback.
+    Please evaluate how well the user explained their decision and logic. Provide concise feedback.
     If the user's answer is not good enough, suggest ways to improve it, or give your own answer.
 
     Format your feedback using Markdown:
@@ -66,5 +53,5 @@ def check_correctness(recorded_audio, generated_text):
         print(f"An error occurred: {e}")
         feedback = "The resources are exhausted"
 
-    feedback = "### Model's Feedback\n" + feedback
-    return generated_text, user_answer, feedback
+    feedback = "### Model Feedback\n" + feedback
+    return user_answer, feedback

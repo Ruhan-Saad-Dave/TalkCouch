@@ -1,32 +1,32 @@
 import gradio as gr
 
-from src.jam import generate_topic, check_answer
+from src.scenario import generate_scenario, check_answer
 
 # the idea is the AI will give a topic, and the user will need to talk about it for a minute.
 
-with gr.Blocks() as Jam:
+with gr.Blocks() as Scenario:
     gr.Markdown(
-        "# Just A Minute (JAM)\n" 
-        "Talk about the topic for atleast a minute"
+        "# Scenarios Based\n" 
+        "Talk about what would you do in the given scenario"
     )
 
-    topic_state = gr.State("")
+    scenario_state = gr.State("")
     
-    generate_button = gr.Button("Generate Topic")
-    topic_label = gr.Label("Your topic will appear here")
-    user_audio = gr.Audio(sources = ["microphone"], type="filepath", label="Record your talk here (Min 60 seconds)")
+    generate_button = gr.Button("Generate Scenario")
+    scenario_label = gr.Label("Your scenario will appear here")
+    user_audio = gr.Audio(sources = ["microphone"], type="filepath", label="Record your talk here")
     submit_button = gr.Button("Submit Recording (May take a while to get response)")
     user_answer = gr.Label(value="Your recording will be shown as text here.", label="User's Answer")
     model_feedback = gr.Markdown(value="Model feedback will be shown here.")
 
-    generate_button.click(fn=generate_topic,
+    generate_button.click(fn=generate_scenario,
                           inputs=[],
-                          outputs=[topic_label, 
-                                   topic_state, 
+                          outputs=[scenario_label, 
+                                   scenario_state, 
                                    user_audio, 
                                    user_answer,
                                    model_feedback])
     
     submit_button.click(fn = check_answer,
-                        inputs = [topic_state, user_audio],
+                        inputs = [scenario_state, user_audio],
                         outputs = [user_answer, model_feedback])

@@ -43,14 +43,17 @@ def check_answer(topic, audio_filepath):
         os.remove(audio_filepath)
 
         if duration_seconds < 60:
-            return user_answer, "Audio is too short. Please record at least 1 minute of audio."
+            feedback = "### Model Feedback\n" + "Audio is too short. Please record at least 1 minute of audio."
+            return user_answer, feedback
         
     except wave.Error as e:
         print(f"Error processing audio file: {e}. Please ensure you are recording in WAV format.")
-        return user_answer, "Error proocessing audio file."
+        feedback = "### Model Feedback\n" + "Error proocessing audio file."
+        return user_answer, feedback
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return user_answer, "Error proocessing audio file."
+        feedback = "### Model Feedback\n" + "Error proocessing audio file."
+        return user_answer, feedback
     
     feedback_prompt = f"""
     The user is asked to talk on the topic:
@@ -62,6 +65,11 @@ def check_answer(topic, audio_filepath):
     {user_answer}
     ---
     Please evaluate how well the user explained the topic. Provide concise feedback.
+    If the user's answer is not good enough, suggest ways to improve it, or give your own answer.
+
+    Format your feedback using Markdown:
+    - Use bullet points or numbered lists for suggestions, with each point on a new line.
+    - Use double asterisks (**) for bolding key phrases for emphasis. Do not use single asterisks for italics.
     """
     try:
         feedback_result = model.invoke(feedback_prompt)
@@ -70,4 +78,5 @@ def check_answer(topic, audio_filepath):
         print(f"An error occurred: {e}")
         feedback = "The resources are exhausted"
 
+    feedback = "### Model Feedback\n" + feedback
     return user_answer, feedback

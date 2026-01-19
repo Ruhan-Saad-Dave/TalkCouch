@@ -22,7 +22,7 @@ with gr.Blocks() as SummarizationPractice:
     with gr.Row():
         user_answer_label = gr.Label(label="Your Answer")
     with gr.Row():
-        correctness_label = gr.Label(label="Model's Feedback")
+        correctness_label = gr.Markdown()
 
     generate_button.click(fn=generate_speech,
                           inputs=[],
