@@ -3,7 +3,10 @@ import gradio as gr
 from src.jumble import generate_sentences, submit_next
 
 with gr.Blocks() as JumbleSentences:
-    gr.Markdown("Write the complete sentence with Captial letters and punctuation in the correct places. Score is given based on number of correct characters.")
+    gr.Markdown(
+        "# Jumble Sentences\n"
+        "Write the complete sentence with Captial letters and punctuation in the correct places. Score is given based on number of correct characters."
+    )
     question_state = gr.State([])
     answer_state = gr.State([])
     index_state = gr.State(1)

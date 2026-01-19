@@ -1,5 +1,4 @@
 from langchain_google_genai import ChatGoogleGenerativeAI 
-from dotenv import load_dotenv
 import speech_recognition as sr
 from gtts import gTTS
 import difflib
@@ -8,11 +7,15 @@ import string
 from src.llm import get_model
 
 message = "Generate a sentence suitable for speech practice. Make sure to only provide the sentence without any additional text or explaination."
+model = get_model()
 
 def generate_text():
-    model = get_model()
-    result = model.invoke(message)
-    return result.content
+    try:
+        result = model.invoke(message)
+        return result.content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return "The resources are exhausted"
 
 def generate_speech():
     content = generate_text()

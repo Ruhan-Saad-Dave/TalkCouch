@@ -3,7 +3,10 @@ import gradio as gr
 from src.speech import generate_speech, check_correctness
 
 with gr.Blocks() as SpeechPractice:
-    gr.Markdown("Listen to the generated sentence and try to repeat it as accurately as possible. Your pronunciation will be evaluated based on correctness.")
+    gr.Markdown(
+        "# Speech Practice\n"
+        "Listen to the generated sentence and try to repeat it as accurately as possible. Your pronunciation will be evaluated based on correctness."
+    )
     generated_text_state = gr.State("")
 
     with gr.Row():

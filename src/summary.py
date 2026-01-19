@@ -6,11 +6,15 @@ import os
 from src.llm import get_model
 
 message = "Generate a paragraph of text where the sentences are related, note that it will be used by the user to practice their explaination ability. Make sure to only provide sentences without any additional text or explaination."
+model = get_model()
 
 def generate_text():
-    model = get_model()
-    result = model.invoke(message)
-    return result.content
+    try:
+        result = model.invoke(message)
+        return result.content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return "The resources are exhausted"
 
 def generate_speech():
     content = generate_text()
@@ -50,9 +54,11 @@ def check_correctness(recorded_audio, generated_text):
 
     Please evaluate how well the user explained or summarized the original text. Provide concise feedback.
     """
-
-    model = get_model()
-    feedback_result = model.invoke(feedback_prompt)
-    feedback = feedback_result.content
+    try:
+        feedback_result = model.invoke(feedback_prompt)
+        feedback = feedback_result.content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        feedback = "The resources are exhausted"
 
     return generated_text, user_answer, feedback

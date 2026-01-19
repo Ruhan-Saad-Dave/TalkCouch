@@ -1,16 +1,12 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 import random
-import os
 import re
 import gradio as gr
 
-load_dotenv()
+from src.llm import get_model
 
-model = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash"
-)
-
+model = get_model()
 number = 10
 message = f"Generate {number} sentences which are unrelated to each other. These sentences will be used for jumbling sentence quiz. Only give the result and dont give any numbers at the beginning."
 
@@ -58,7 +54,7 @@ def generate_sentences():
     except Exception as e:
         print(f"Error generating sentences: {e}")
         # Return dummy values for all outputs
-        return [], [], gr.Label(value=f"Error: {e}", label="Error"), gr.Button(value="Submit", interactive=False), "", "Error", "Error", 1, 0, 0, ""
+        return [], [], gr.Label(value="Error: The resources are exhausted", label="Error"), gr.Button(value="Submit", interactive=False), "", "Error", "Error", 1, 0, 0, ""
 
 def submit_answer(user_answer, question_state, answer_state, index_state, score_state, total_score_state):
     # Normalize by making lowercase and removing punctuation

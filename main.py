@@ -4,10 +4,11 @@ import os
 from ui.jumble import JumbleSentences
 from ui.speech import SpeechPractice
 from ui.summary import SummarizationPractice
+from ui.jam import JAM
 
 demo = gr.TabbedInterface(
-    [JumbleSentences, SpeechPractice, SummarizationPractice],
-    tab_names=["Jumble Sentences", "Speech Practice", "Summarization Practice"],
+    [JumbleSentences, SpeechPractice, SummarizationPractice, JAM],
+    tab_names=["Jumble Sentences", "Speech Practice", "Summarization Practice", "Just A Minute (JAM)"],
     title="TalkCouch"
 )
 
