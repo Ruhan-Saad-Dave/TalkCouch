@@ -4,10 +4,12 @@ import random
 import re
 
 from src.services.v2.llm_service import LLMService
+from src.services.v2.media_service import MediaService
 
 class QuestionService:
-    def __init__(self, llm_service: LLMService = Depends()):
+    def __init__(self, llm_service: LLMService = Depends(), media_service: MediaService = Depends()):
         self.llm_service = llm_service
+        self.media_service = media_service
 
     async def jam_question(self) -> str:
         instruction = "Generate a topic for a one minute talk session. The topic should be engaging and open-ended to encourage detailed discussion. Only include the topic and dont include any explaination or other stuff"
@@ -37,7 +39,8 @@ class QuestionService:
     async def speech_question(self) -> str:
         instruction = "Generate a sentence suitable for speech practice. Make sure to only provide the sentence without any additional text or explaination."
         question = await self.llm_service.get_question(instruction)
-        return question
+        audio_fp = await self.media_service.generate_audio(question)
+        return question, audio_fp
 
     async def summary_question(self) -> str:
         instruction = "Generate a paragraph of text where the sentences are related, note that it will be used by the user to practice their explaination ability. Make sure to only provide sentences without any additional text or explaination."

@@ -39,14 +39,13 @@ async def get_scenario_question(service: QuestionService = Depends()):
     return {"question": questions}
 
 @question_app.get("/speech", status_code=status.HTTP_200_OK)
-async def get_speech_question(service: QuestionService = Depends(), media: MediaService = Depends()):
-    question = await service.speech_question() 
-    if not question: 
+async def get_speech_question(service: QuestionService = Depends()):
+    question, audio_fp = await service.speech_question() 
+    if not question or not audio_fp: 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to generate question"
         )
-    audio_fp = await media.generate_audio(question)
     return {"question": question, "audio": audio_fp.getvalue()}
 
 @question_app.get("/summary", status_code=status.HTTP_200_OK)
