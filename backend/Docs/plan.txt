@@ -1,0 +1,8 @@
+1. Use gemini to generate a couple sentences. Separate them via full stop to make multiple sentences,
+and separate the words via each space. Once got the list, shuffle them, and use similar strategy of splitting 
+to analyse the user's answer, based on all the questions give score.
+
+2. Need to use Speech to text and Text to speech for this. And a suitable prompt
+
+3. Same strategy as number 2, but for the answer, in the prompt need to give the base story as well as 
+user's speech and some instruction to give score.

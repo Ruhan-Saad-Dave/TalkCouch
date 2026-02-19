@@ -1,0 +1,3 @@
+# jam
+1. generate topic
+2. receive data from user and give response

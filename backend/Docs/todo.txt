@@ -1,0 +1,4 @@
+accent in settings, 
+difficulty setting
+on resource exhaust, give a log message, also give preplanned questions
+debate
