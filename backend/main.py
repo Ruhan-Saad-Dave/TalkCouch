@@ -17,9 +17,11 @@ app = FastAPI(
 app.include_router(question_app, prefix="/api/questions")
 app.include_router(evaluation_app, prefix="/api/evaluation")
 
+#app = gr.mount_gradio_app(app, gradio_app, path="/gradio")
+
 @app.get("/")
 async def root():
-    return RedirectResponse(url="/docs")
+    return RedirectResponse(url="/docs") #/gradio
 
 @app.post("/shutdown")
 async def shutdown():
