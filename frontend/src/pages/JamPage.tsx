@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { getJamQuestion, evaluateJam } from '../services/api';
 import { Button } from '@/components/ui/button';
+import Markdown from 'react-markdown';
 
 type EvaluationFeedback = {
   user_answer: string;
@@ -27,7 +28,7 @@ export default function JamPage() {
       const data = await getJamQuestion();
       setQuestion(data.question);
     } catch (err) {
-      setError('Failed to fetch question. Please try again.');
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -70,7 +71,7 @@ export default function JamPage() {
       const result = await evaluateJam(question, audioBlob);
       setFeedback(result);
     } catch (err) {
-      setError('Failed to evaluate session. Please try again.');
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
       console.error(err);
     } finally {
       setEvaluating(false);
@@ -112,7 +113,7 @@ export default function JamPage() {
             <h3 className="font-semibold">What you said:</h3>
             <p>"{feedback.user_answer}"</p>
             <h3 className="font-semibold mt-4">Our analysis:</h3>
-            <p>{feedback.feedback}</p>
+            <Markdown className="prose prose-sm max-w-none">{feedback.feedback}</Markdown>
           </div>
         </div>
       )}

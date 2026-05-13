@@ -14,6 +14,14 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:4173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(question_app, prefix="/api/questions")
 app.include_router(evaluation_app, prefix="/api/evaluation")
 

@@ -1,36 +1,64 @@
-# Talk Couch
+# TalkCouch
 
-Talk Couch is a web application designed to help users practice and improve their communication skills through a variety of interactive exercises.
+A communication skills practice app. Built for anyone who wants to improve their spoken English, vocabulary, and quick thinking through structured, interactive exercises.
+
+## Features
+
+| Module | What you do |
+|--------|------------|
+| **JAM** | Get a random topic and speak about it for one minute without hesitation or deviation |
+| **Jumble** | Unscramble ten shuffled sentences to restore their correct word order |
+| **Scenario** | Listen to a real-life situation and explain what you would do |
+| **Speech** | Listen to a sentence read aloud, then repeat it with correct pronunciation |
+| **Summary** | Listen to a paragraph read aloud, then explain it in your own words |
+
+Audio responses (JAM, Scenario, Speech, Summary) are transcribed and evaluated by an LLM (Gemini 2.5 Flash), which provides detailed markdown-formatted feedback.
 
 ## Project Structure
 
-This project is a monorepo containing two main parts:
+```
+TalkCouch/
+├── backend/       # FastAPI server — question generation + evaluation
+└── frontend/      # React + Vite SPA
+```
 
--   `./frontend`: A React-based single-page application that provides the user interface.
--   `./backend`: A FastAPI server that provides the API for the frontend, including generating questions and evaluating user responses.
+## Quick Start
 
-## Getting Started
+You need both servers running at the same time.
 
-To get the full application running, you will need to set up both the backend and the frontend.
+### 1. Backend
 
-### Prerequisites
+```bash
+cd backend
+pip install uv          # if not already installed
+uv sync
+uv run uvicorn main:app --reload
+```
 
--   Node.js (for the frontend)
--   Python (for the backend)
+The API will be available at `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
 
-### Setup and Running
+Create a `.env` file inside `backend/`:
+```
+GOOGLE_API_KEY=your_gemini_api_key_here
+```
 
-1.  **Backend Setup:**
-    -   Navigate to the `backend` directory.
-    -   For detailed instructions on setting up and running the backend server, please refer to the [backend README](./backend/README.md).
+### 2. Frontend
 
-2.  **Frontend Setup:**
-    -   Navigate to the `frontend` directory.
-    -   For detailed instructions on setting up and running the frontend application, please refer to the [frontend README](./frontend/README.md).
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-Once both the backend and frontend servers are running, you can access the application in your browser at the address provided by the frontend development server (usually `http://localhost:5173`).
+Open `http://localhost:5173` in your browser.
 
-## Documentation
+The frontend expects a `.env` file inside `frontend/`:
+```
+VITE_API_URL=http://localhost:8000
+```
 
--   [Frontend Documentation](./frontend/README.md)
--   [Backend Documentation](./backend/README.md)
+## Tech Stack
+
+**Backend:** Python 3.12, FastAPI, Uvicorn, LangChain + Gemini 2.5 Flash, gTTS, SpeechRecognition, pydub
+
+**Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4, shadcn/ui, react-markdown

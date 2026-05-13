@@ -42,7 +42,8 @@ class QuestionService:
         audio_fp = await self.media_service.generate_audio(question)
         return question, audio_fp
 
-    async def summary_question(self) -> str:
+    async def summary_question(self):
         instruction = "Generate a paragraph of text where the sentences are related, note that it will be used by the user to practice their explaination ability. Make sure to only provide sentences without any additional text or explaination."
         question = await self.llm_service.get_question(instruction)
-        return question
+        audio_fp = await self.media_service.generate_audio(question)
+        return question, audio_fp

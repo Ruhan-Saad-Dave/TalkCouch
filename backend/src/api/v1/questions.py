@@ -50,10 +50,10 @@ async def get_speech_question(service: QuestionService = Depends()):
 
 @question_app.get("/summary", status_code=status.HTTP_200_OK)
 async def get_summary_question(service: QuestionService = Depends()):
-    question = await service.summary_question() 
-    if not question: 
+    question, audio_fp = await service.summary_question()
+    if not question or not audio_fp:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to generate question"
         )
-    return {"question": question}
+    return {"question": question, "audio": audio_fp.getvalue()}

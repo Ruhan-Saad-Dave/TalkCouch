@@ -36,9 +36,6 @@ function App() {
           <SidebarTrigger className="mb-4" />
 
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6 capitalize">
-              {activeTab} Session
-            </h1>
             <div className="bg-white rounded-xl shadow-sm border p-8 min-h-[500px]">
               {renderContent()}
             </div>

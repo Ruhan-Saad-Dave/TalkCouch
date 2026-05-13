@@ -3,7 +3,8 @@ import { getSpeechQuestion, evaluateSpeech } from '../services/api';
 import { Button } from '@/components/ui/button';
 
 type EvaluationFeedback = {
-  feedback: string;
+  user_answer: string;
+  accuracy: string;
 };
 
 export default function SpeechPage() {
@@ -31,7 +32,7 @@ export default function SpeechPage() {
       const url = URL.createObjectURL(audioBlob);
       setAudioUrl(url);
     } catch (err) {
-      setError('Failed to fetch speech topic. Please try again.');
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -69,10 +70,10 @@ export default function SpeechPage() {
     audioChunks.current = [];
 
     try {
-      const result = await evaluateSpeech(audioBlob);
+      const result = await evaluateSpeech(question!, audioBlob);
       setFeedback(result);
     } catch (err) {
-      setError('Failed to evaluate speech. Please try again.');
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
       console.error(err);
     } finally {
       setEvaluating(false);
@@ -116,9 +117,10 @@ export default function SpeechPage() {
 
       {feedback && (
         <div className="mt-6">
-          <h2 className="text-xl font-semibold">Feedback:</h2>
-          <div className="p-4 bg-gray-100 rounded-md">
-            <p>{feedback.feedback}</p>
+          <h2 className="text-xl font-semibold">Results:</h2>
+          <div className="p-4 bg-gray-100 rounded-md space-y-2">
+            <p><strong>Accuracy:</strong> {feedback.accuracy}</p>
+            <p><strong>Your transcription:</strong> {feedback.user_answer}</p>
           </div>
         </div>
       )}

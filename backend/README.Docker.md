@@ -1,22 +1,30 @@
-### Building and running your application
+# Docker — TalkCouch Backend
 
-When you're ready, start your application by running:
-`docker compose up --build`.
+> **Note:** Only the backend has a Docker setup currently. A full-stack `docker-compose.yml` (with the frontend) is not yet implemented.
 
-Your application will be available at http://localhost:8000.
+## Running the backend with Docker
 
-### Deploying your application to the cloud
+```bash
+cd backend
+docker compose up --build
+```
 
-First, build your image, e.g.: `docker build -t myapp .`.
-If your cloud uses a different CPU architecture than your development
-machine (e.g., you are on a Mac M1 and your cloud provider is amd64),
-you'll want to build the image for that platform, e.g.:
-`docker build --platform=linux/amd64 -t myapp .`.
+The API will be available at `http://localhost:8000`.
 
-Then, push it to your registry, e.g. `docker push myregistry.com/myapp`.
+## Environment variables
 
-Consult Docker's [getting started](https://docs.docker.com/go/get-started-sharing/)
-docs for more detail on building and pushing.
+The container reads from a `.env` file. Create one in the `backend/` directory before building:
 
-### References
-* [Docker's Python guide](https://docs.docker.com/language/python/)
+```
+GOOGLE_API_KEY=your_gemini_api_key_here
+```
+
+## What's included
+
+- `Dockerfile` — builds the Python backend using `uv`
+- `compose.yaml` — runs the backend service on port 8000
+
+## What's not yet implemented
+
+- Frontend `Dockerfile`
+- Root-level `docker-compose.yml` to run the full stack (backend + frontend) together

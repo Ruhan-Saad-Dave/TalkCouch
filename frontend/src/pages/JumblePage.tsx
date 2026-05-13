@@ -33,7 +33,7 @@ export default function JumblePage() {
       setJumble(data);
       setUserAnswers(new Array(data.questions.length).fill(''));
     } catch (err) {
-      setError('Failed to fetch jumble. Please try again.');
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -55,7 +55,7 @@ export default function JumblePage() {
       const result = await evaluateJumble(userAnswers, jumble.answers);
       setFeedback(result);
     } catch (err) {
-      setError('Failed to evaluate answers. Please try again.');
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
       console.error(err);
     } finally {
       setEvaluating(false);

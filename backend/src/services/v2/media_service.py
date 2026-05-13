@@ -7,9 +7,12 @@ class MediaService:
     def __init__(self, service: SpeechService = Depends()):
         self.service = service 
 
-    async def process_audio(self, audio_file: bytes) -> str:
+    async def process_audio(self, audio_file: io.BytesIO) -> str:
         result = await self.service.speech_to_text(audio_file)
         return result
+
+    async def transcribe_audio(self, audio_file: io.BytesIO) -> str:
+        return await self.process_audio(audio_file)
     
     async def generate_audio(self, text: str) -> io.BytesIO:
         audio_fp = await self.service.text_to_speech(text)
