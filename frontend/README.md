@@ -31,11 +31,14 @@ npm run preview  # preview production build locally
 
 | Page | What it does |
 |------|-------------|
-| **JAM** | Fetches a random topic, records the user's audio, sends to backend for LLM evaluation |
-| **Jumble** | Fetches 10 shuffled sentences, accepts typed answers, scores character-level accuracy |
+| **JAM** | Fetches a random topic, starts a 60-second countdown, records audio, sends to backend for LLM evaluation |
+| **Jumble** | Fetches 10 shuffled sentences, accepts typed answers, shows per-sentence correct/incorrect with the right answer revealed |
 | **Scenario** | Fetches a scenario, records the user's spoken response, sends for LLM evaluation |
-| **Speech** | Fetches a sentence + plays TTS audio, records the user repeating it, shows similarity score |
+| **Speech** | Fetches a sentence + plays TTS audio, records the user repeating it, shows pronunciation similarity score |
 | **Summary** | Fetches a paragraph + plays TTS audio, records the user's verbal explanation, sends for LLM evaluation |
+| **History** | Reads session history from localStorage and displays all past attempts as expandable cards |
+
+Every page has a **Try Another** button after feedback is shown. All completed sessions are saved to localStorage automatically.
 
 Feedback from the LLM is rendered as formatted markdown (bold, bullet points).
 
@@ -52,15 +55,19 @@ frontend/
 │   │   ├── JumblePage.tsx
 │   │   ├── ScenarioPage.tsx
 │   │   ├── SpeechPage.tsx
-│   │   └── SummaryPage.tsx
+│   │   ├── SummaryPage.tsx
+│   │   └── HistoryPage.tsx  # Session history browser
 │   ├── services/
 │   │   └── api.ts           # All backend API calls
 │   ├── lib/
-│   │   └── utils.ts         # shadcn cn() utility
+│   │   ├── utils.ts         # shadcn cn() utility
+│   │   └── history.ts       # localStorage history (saveEntry, getHistory, clearHistory)
 │   ├── App.tsx              # Layout + sidebar-based navigation
 │   ├── Home.tsx             # Landing page
 │   └── main.tsx             # Entry point
 ├── components.json          # shadcn/ui config
+├── nginx.conf               # SPA routing for Docker deployment
+├── Dockerfile               # Multi-stage: node build → nginx serve
 ├── vite.config.ts           # Vite config + @ path alias
 ├── tsconfig.app.json        # TypeScript config (strict mode)
 └── .env                     # VITE_API_URL

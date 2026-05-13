@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { getSpeechQuestion, evaluateSpeech } from '../services/api';
+import { saveEntry } from '../lib/history';
 import { Button } from '@/components/ui/button';
 
 type EvaluationFeedback = {
@@ -72,6 +73,7 @@ export default function SpeechPage() {
     try {
       const result = await evaluateSpeech(question!, audioBlob);
       setFeedback(result);
+      saveEntry({ feature: 'speech', question: question!, userAnswer: result.user_answer, accuracy: result.accuracy });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
       console.error(err);
@@ -122,6 +124,7 @@ export default function SpeechPage() {
             <p><strong>Accuracy:</strong> {feedback.accuracy}</p>
             <p><strong>Your transcription:</strong> {feedback.user_answer}</p>
           </div>
+          <Button onClick={handleGetQuestion} className="mt-4">Try Another</Button>
         </div>
       )}
     </div>

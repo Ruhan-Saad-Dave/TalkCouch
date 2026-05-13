@@ -49,17 +49,22 @@ All routes are prefixed with `/api`.
 
 ### Evaluation — `POST /api/evaluation/v1/`
 
-All audio evaluation endpoints accept `multipart/form-data`.
+All audio evaluation endpoints accept `multipart/form-data`. Jumble accepts a JSON body.
 
-| Endpoint | Form fields | Response |
-|----------|------------|----------|
-| `POST /jam` | `question: str`, `user_answer_audio: file` | `{ user_answer, feedback }` |
-| `POST /jumble` | JSON body: `{ user_answers: string[], correct_answers: string[] }` | `{ score, total_score, accuracy }` |
-| `POST /scenario` | `scenario: str`, `user_answer_audio: file` | `{ user_answer, feedback }` |
-| `POST /speech` | `question: str`, `user_answer_audio: file` | `{ user_answer, accuracy }` |
-| `POST /summary` | `summary_question: str`, `user_answer_audio: file` | `{ user_answer, feedback }` |
+| Endpoint | Input | Response |
+|----------|-------|----------|
+| `POST /jam` | form: `question: str`, `user_answer_audio: file` | `{ user_answer, feedback }` |
+| `POST /jumble` | JSON: `{ user_answers: string[], correct_answers: string[] }` | `{ score, total_score, accuracy, results }` |
+| `POST /scenario` | form: `scenario: str`, `user_answer_audio: file` | `{ user_answer, feedback }` |
+| `POST /speech` | form: `question: str`, `user_answer_audio: file` | `{ user_answer, accuracy }` |
+| `POST /summary` | form: `summary_question: str`, `user_answer_audio: file` | `{ user_answer, feedback }` |
 
-`feedback` is markdown-formatted text from Gemini. `accuracy` (speech only) is a percentage string showing similarity between the user's speech transcription and the original sentence.
+**Jumble `results` array** — one entry per sentence:
+```json
+[{ "user": "...", "correct": "...", "is_exact": true }]
+```
+
+`feedback` is markdown-formatted text from Gemini. `accuracy` (speech only) is a percentage string showing how closely the user's transcription matched the original sentence.
 
 ## Project Structure
 
@@ -74,7 +79,7 @@ backend/
     │   └── evaluation.py      # Evaluation endpoints
     ├── services/v2/
     │   ├── question_service.py   # Generates questions + TTS audio
-    │   ├── evaluation_service.py # Transcribes audio + evaluates
+    │   ├── evaluation_service.py # Transcribes audio + evaluates with LLM
     │   ├── llm_service.py        # Gemini LLM wrapper
     │   └── media_service.py      # Audio transcription + generation
     └── core/

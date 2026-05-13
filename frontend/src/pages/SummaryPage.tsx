@@ -1,12 +1,8 @@
 import { useState, useRef } from 'react';
-import { getSummaryQuestion, evaluateSummary } from '../services/api';
+import { getSummaryQuestion, streamEvaluateSummary } from '../services/api';
+import { saveEntry } from '../lib/history';
 import { Button } from '@/components/ui/button';
 import Markdown from 'react-markdown';
-
-type EvaluationFeedback = {
-  user_answer: string;
-  feedback: string;
-};
 
 export default function SummaryPage() {
   const [question, setQuestion] = useState<string | null>(null);
@@ -15,7 +11,8 @@ export default function SummaryPage() {
   const [error, setError] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
-  const [feedback, setFeedback] = useState<EvaluationFeedback | null>(null);
+  const [userAnswer, setUserAnswer] = useState<string | null>(null);
+  const [feedbackText, setFeedbackText] = useState('');
 
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioChunks = useRef<Blob[]>([]);
@@ -25,7 +22,8 @@ export default function SummaryPage() {
     setError(null);
     setQuestion(null);
     setAudioUrl(null);
-    setFeedback(null);
+    setUserAnswer(null);
+    setFeedbackText('');
     try {
       const data = await getSummaryQuestion();
       setQuestion(data.question);
@@ -33,50 +31,61 @@ export default function SummaryPage() {
       setAudioUrl(URL.createObjectURL(audioBlob));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   const startRecording = async () => {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder.current = new MediaRecorder(stream);
-      mediaRecorder.current.ondataavailable = (event) => {
-        audioChunks.current.push(event.data);
-      };
-      mediaRecorder.current.start();
-      setIsRecording(true);
-      setFeedback(null);
-    } else {
+    if (!navigator.mediaDevices?.getUserMedia) {
       setError("Your browser doesn't support audio recording.");
+      return;
     }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder.current = new MediaRecorder(stream);
+    mediaRecorder.current.ondataavailable = (e) => { audioChunks.current.push(e.data); };
+    mediaRecorder.current.onstop = handleEvaluation;
+    mediaRecorder.current.start();
+    setIsRecording(true);
+    setUserAnswer(null);
+    setFeedbackText('');
+    setError(null);
   };
 
   const stopRecording = () => {
     if (mediaRecorder.current) {
       mediaRecorder.current.stop();
-      mediaRecorder.current.stream.getTracks().forEach(track => track.stop());
+      mediaRecorder.current.stream.getTracks().forEach(t => t.stop());
       setIsRecording(false);
-      mediaRecorder.current.onstop = handleEvaluation;
     }
   };
 
   const handleEvaluation = async () => {
     if (!question) return;
-
     setEvaluating(true);
     setError(null);
     const audioBlob = new Blob(audioChunks.current, { type: 'audio/webm' });
     audioChunks.current = [];
 
+    let transcribedAnswer = '';
+    let fullFeedback = '';
+
     try {
-      const result = await evaluateSummary(question, audioBlob);
-      setFeedback(result);
+      for await (const chunk of streamEvaluateSummary(question, audioBlob)) {
+        if (chunk.type === 'answer') {
+          transcribedAnswer = chunk.value;
+          setUserAnswer(chunk.value);
+        } else if (chunk.type === 'token') {
+          fullFeedback += chunk.value;
+          setFeedbackText(prev => prev + chunk.value);
+        } else if (chunk.type === 'error') {
+          setError(chunk.value);
+          return;
+        }
+      }
+      saveEntry({ feature: 'summary', question, userAnswer: transcribedAnswer, feedback: fullFeedback });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
-      console.error(err);
     } finally {
       setEvaluating(false);
     }
@@ -107,7 +116,7 @@ export default function SummaryPage() {
 
           <div className="mt-4">
             {!isRecording ? (
-              <Button onClick={startRecording}>Start Recording</Button>
+              <Button onClick={startRecording} disabled={evaluating}>Start Recording</Button>
             ) : (
               <Button onClick={stopRecording} variant="destructive">Stop Recording</Button>
             )}
@@ -115,17 +124,27 @@ export default function SummaryPage() {
         </div>
       )}
 
-      {evaluating && <p className="mt-4">Evaluating your explanation...</p>}
+      {evaluating && !userAnswer && (
+        <p className="mt-4 text-gray-500 animate-pulse">Transcribing your audio...</p>
+      )}
 
-      {feedback && (
+      {userAnswer !== null && (
         <div className="mt-6">
           <h2 className="text-xl font-semibold">Feedback:</h2>
           <div className="p-4 bg-gray-100 rounded-md">
             <h3 className="font-semibold">What you said:</h3>
-            <p>"{feedback.user_answer}"</p>
-            <h3 className="font-semibold mt-4">Our analysis:</h3>
-            <Markdown className="prose prose-sm max-w-none">{feedback.feedback}</Markdown>
+            <p className="italic text-gray-700">"{userAnswer}"</p>
+            {feedbackText && (
+              <>
+                <h3 className="font-semibold mt-4">Our analysis:</h3>
+                <Markdown className="prose prose-sm max-w-none">{feedbackText}</Markdown>
+              </>
+            )}
+            {evaluating && (
+              <p className="text-sm text-gray-400 mt-2 animate-pulse">Generating feedback...</p>
+            )}
           </div>
+          {!evaluating && <Button onClick={handleGetQuestion} className="mt-4">Try Another</Button>}
         </div>
       )}
     </div>

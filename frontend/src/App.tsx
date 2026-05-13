@@ -7,6 +7,7 @@ import JumblePage from "./pages/JumblePage";
 import ScenarioPage from "./pages/ScenarioPage";
 import SpeechPage from "./pages/SpeechPage";
 import SummaryPage from "./pages/SummaryPage";
+import HistoryPage from "./pages/HistoryPage";
 
 function App() {
   const [activeTab, setActiveTab] = useState("home");
@@ -23,6 +24,8 @@ function App() {
         return <SpeechPage />;
       case "summary":
         return <SummaryPage />;
+      case "history":
+        return <HistoryPage />;
       default:
         return <Home />;
     }

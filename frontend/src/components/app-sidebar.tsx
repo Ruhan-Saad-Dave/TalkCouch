@@ -1,4 +1,4 @@
-import {Mic, Puzzle, MessageSquare, FileText, BarChart3} from "lucide-react"
+import {Mic, Puzzle, MessageSquare, FileText, BarChart3, History} from "lucide-react"
 import {
     Sidebar,
     SidebarHeader,
@@ -17,6 +17,7 @@ const items = [
     {title: "Speech", url: "#", icon: MessageSquare, id: "speech"},
     {title: "Scenarios", url: "#", icon: FileText, id: "scenario"},
     {title: "Summary", url: "#", icon: BarChart3, id: "summary"},
+    {title: "History", url: "#", icon: History, id: "history"},
 ]
 
 export function AppSidebar({onNavigate}: {onNavigate: (id: string) => void}){
