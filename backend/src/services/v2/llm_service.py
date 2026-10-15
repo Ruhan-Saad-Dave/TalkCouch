@@ -3,7 +3,7 @@ from google.api_core.exceptions import ResourceExhausted
 from fastapi import Depends, HTTPException, status
 from typing import AsyncGenerator
 
-from src.core.llm import get_llm_model
+from src.core.llm import get_llm_model_dep
 
 _QUESTION_SYSTEM = (
     "You are a communication practice assistant. "
@@ -18,7 +18,7 @@ _EVALUATION_SYSTEM = (
 
 
 class LLMService:
-    def __init__(self, llm_model=Depends(get_llm_model)):
+    def __init__(self, llm_model=Depends(get_llm_model_dep)):
         self.llm_model = llm_model
 
     async def get_question(self, instruction: str) -> str:

@@ -19,9 +19,12 @@ Audio responses (JAM, Scenario, Speech, Summary) are transcribed and evaluated b
 
 ```
 TalkCouch/
-├── backend/            # FastAPI server — question generation + evaluation
-├── frontend/           # React + Vite SPA
-└── docker-compose.yml  # Full-stack Docker setup
+├── backend/              # FastAPI server — question generation + evaluation
+├── frontend/             # React + Vite SPA
+├── deploy/               # Deployment scripts (ECR push, S3 sync, EC2 restart)
+├── .github/workflows/    # GitHub Actions CI/CD (auto-deploy to AWS on push)
+├── docker-compose.yml    # Full-stack local Docker setup
+└── AWS_DEPLOY.md         # Step-by-step AWS deployment guide
 ```
 
 ## Quick Start
@@ -113,4 +116,4 @@ Frontend at `http://localhost:80`, backend at `http://localhost:8000`.
 
 ### Suggestions
 
-1. **Deploy it.** A live URL on a resume beats any bullet. Railway/Render (backend) + Vercel (frontend) are both free tier.
+1. **Deploy it.** A live URL on a resume beats any bullet. See [AWS_DEPLOY.md](AWS_DEPLOY.md) for the full ECR + EC2 + S3/CloudFront setup.

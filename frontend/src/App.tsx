@@ -8,6 +8,7 @@ import ScenarioPage from "./pages/ScenarioPage";
 import SpeechPage from "./pages/SpeechPage";
 import SummaryPage from "./pages/SummaryPage";
 import HistoryPage from "./pages/HistoryPage";
+import SettingsPage from "./pages/SettingsPage";
 
 function App() {
   const [activeTab, setActiveTab] = useState("home");
@@ -26,6 +27,8 @@ function App() {
         return <SummaryPage />;
       case "history":
         return <HistoryPage />;
+      case "settings":
+        return <SettingsPage />;
       default:
         return <Home />;
     }

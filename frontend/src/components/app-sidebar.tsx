@@ -1,9 +1,9 @@
-import {Mic, Puzzle, MessageSquare, FileText, BarChart3, History} from "lucide-react"
+import { Mic, Puzzle, MessageSquare, FileText, BarChart3, History, Settings } from "lucide-react"
 import {
     Sidebar,
     SidebarHeader,
     SidebarContent,
-    SidebarGroup, 
+    SidebarGroup,
     SidebarGroupContent,
     SidebarGroupLabel,
     SidebarMenu,
@@ -11,35 +11,56 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-const items = [
-    {title: "JAM", url: "#", icon: Mic, id: "jam"},
-    {title: "Jumble", url: "#", icon: Puzzle, id: "jumble"},
-    {title: "Speech", url: "#", icon: MessageSquare, id: "speech"},
-    {title: "Scenarios", url: "#", icon: FileText, id: "scenario"},
-    {title: "Summary", url: "#", icon: BarChart3, id: "summary"},
-    {title: "History", url: "#", icon: History, id: "history"},
+const practiceItems = [
+    { title: "JAM",       icon: Mic,           id: "jam"      },
+    { title: "Jumble",    icon: Puzzle,         id: "jumble"   },
+    { title: "Speech",    icon: MessageSquare,  id: "speech"   },
+    { title: "Scenarios", icon: FileText,       id: "scenario" },
+    { title: "Summary",   icon: BarChart3,      id: "summary"  },
 ]
 
-export function AppSidebar({onNavigate}: {onNavigate: (id: string) => void}){
+const utilityItems = [
+    { title: "History",  icon: History,  id: "history"  },
+    { title: "Settings", icon: Settings, id: "settings" },
+]
+
+export function AppSidebar({ onNavigate }: { onNavigate: (id: string) => void }) {
     return (
         <Sidebar variant="sidebar" collapsible="icon">
             <SidebarHeader>
                 <SidebarMenuButton onClick={() => onNavigate('home')}>
                     Talk Couch
                 </SidebarMenuButton>
-                
             </SidebarHeader>
-            <hr/>
+            <hr />
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Practice Tools</SidebarGroupLabel>
+                    <SidebarGroupLabel>Practice</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {items.map((item) => (
+                            {practiceItems.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild onClick={()=> onNavigate(item.id)}>
+                                    <SidebarMenuButton asChild onClick={() => onNavigate(item.id)}>
                                         <button>
-                                            <item.icon className="w-4 h-4"/>
+                                            <item.icon className="w-4 h-4" />
+                                            <span>{item.title}</span>
+                                        </button>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+
+                <SidebarGroup>
+                    <SidebarGroupLabel>Account</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            {utilityItems.map((item) => (
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton asChild onClick={() => onNavigate(item.id)}>
+                                        <button>
+                                            <item.icon className="w-4 h-4" />
                                             <span>{item.title}</span>
                                         </button>
                                     </SidebarMenuButton>

@@ -1,4 +1,11 @@
+import { getApiKey } from '../lib/apiKey';
+
 const API_URL = import.meta.env.VITE_API_URL;
+
+function apiKeyHeader(): Record<string, string> {
+  const key = getApiKey();
+  return key ? { 'X-Api-Key': key } : {};
+}
 
 async function parseError(response: Response): Promise<string> {
   try {
@@ -14,31 +21,31 @@ async function parseError(response: Response): Promise<string> {
 // ── Question endpoints ─────────────────────────────────────────────────────────
 
 export const getJamQuestion = async () => {
-  const response = await fetch(`${API_URL}/api/questions/v1/jam`);
+  const response = await fetch(`${API_URL}/api/questions/v1/jam`, { headers: apiKeyHeader() });
   if (!response.ok) throw new Error(await parseError(response));
   return response.json();
 };
 
 export const getJumbleQuestion = async () => {
-  const response = await fetch(`${API_URL}/api/questions/v1/jumble`);
+  const response = await fetch(`${API_URL}/api/questions/v1/jumble`, { headers: apiKeyHeader() });
   if (!response.ok) throw new Error(await parseError(response));
   return response.json();
 };
 
 export const getScenarioQuestion = async () => {
-  const response = await fetch(`${API_URL}/api/questions/v1/scenario`);
+  const response = await fetch(`${API_URL}/api/questions/v1/scenario`, { headers: apiKeyHeader() });
   if (!response.ok) throw new Error(await parseError(response));
   return response.json();
 };
 
 export const getSpeechQuestion = async () => {
-  const response = await fetch(`${API_URL}/api/questions/v1/speech`);
+  const response = await fetch(`${API_URL}/api/questions/v1/speech`, { headers: apiKeyHeader() });
   if (!response.ok) throw new Error(await parseError(response));
   return response.json();
 };
 
 export const getSummaryQuestion = async () => {
-  const response = await fetch(`${API_URL}/api/questions/v1/summary`);
+  const response = await fetch(`${API_URL}/api/questions/v1/summary`, { headers: apiKeyHeader() });
   if (!response.ok) throw new Error(await parseError(response));
   return response.json();
 };
@@ -48,7 +55,7 @@ export const getSummaryQuestion = async () => {
 export const evaluateJumble = async (userAnswers: string[], correctAnswers: string[]) => {
   const response = await fetch(`${API_URL}/api/evaluation/v1/jumble`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...apiKeyHeader() },
     body: JSON.stringify({ user_answers: userAnswers, correct_answers: correctAnswers }),
   });
   if (!response.ok) throw new Error(await parseError(response));
@@ -61,6 +68,7 @@ export const evaluateSpeech = async (question: string, audioBlob: Blob) => {
   formData.append('user_answer_audio', audioBlob, 'recording.webm');
   const response = await fetch(`${API_URL}/api/evaluation/v1/speech`, {
     method: 'POST',
+    headers: apiKeyHeader(),
     body: formData,
   });
   if (!response.ok) throw new Error(await parseError(response));
@@ -75,7 +83,7 @@ type StreamChunk =
   | { type: 'error'; value: string };
 
 async function* streamEvaluate(url: string, formData: FormData): AsyncGenerator<StreamChunk> {
-  const response = await fetch(url, { method: 'POST', body: formData });
+  const response = await fetch(url, { method: 'POST', headers: apiKeyHeader(), body: formData });
   if (!response.ok) throw new Error(await parseError(response));
   if (!response.body) throw new Error('No response body');
 
